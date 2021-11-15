@@ -7,6 +7,24 @@ import (
 	"github.com/go-ini/ini"
 )
 
+const (
+	RUN_MODE      = "RUN_MODE"
+	APP           = "app"
+	PAGE_SIZE     = "PAGE_SIZE"
+	JWT_SECRET    = "JWT_SECRET"
+	SERVER        = "server"
+	HTTP_PORT     = "HTTP_PORT"
+	READ_TIMEOUT  = "READ_TIMEOUT"
+	WRITE_TIMEOUT = "WRITE_TIMEOUT"
+	DATABASE      = "database"
+	TYPE          = "TYPE"
+	USER          = "USER"
+	PASSWORD      = "PASSWORD"
+	HOST          = "HOST"
+	NAME          = "NAME"
+	TABLE_PREFIX  = "TABLE_PREFIX"
+)
+
 var (
 	Cfg *ini.File
 
@@ -33,26 +51,26 @@ func init() {
 }
 
 func LoadBase() {
-	RunMode = Cfg.Section("").Key("RUN_MODE").MustString("debug")
+	RunMode = Cfg.Section("").Key(RUN_MODE).MustString("debug")
 }
 
 func LoadServer() {
-	sec, err := Cfg.GetSection("server")
+	sec, err := Cfg.GetSection(SERVER)
 	if err != nil {
 		log.Fatalf("Fail to get section 'server': %v", err)
 	}
 
-	HTTPPort = sec.Key("HTTP_PORT").MustInt(8000)
-	ReadTimeout = time.Duration(sec.Key("READ_TIMEOUT").MustInt(60)) * time.Second
-	WriteTimeout = time.Duration(sec.Key("WRITE_TIMEOUT").MustInt(60)) * time.Second
+	HTTPPort = sec.Key(HTTP_PORT).MustInt(8000)
+	ReadTimeout = time.Duration(sec.Key(READ_TIMEOUT).MustInt(60)) * time.Second
+	WriteTimeout = time.Duration(sec.Key(WRITE_TIMEOUT).MustInt(60)) * time.Second
 }
 
 func LoadApp() {
-	sec, err := Cfg.GetSection("app")
+	sec, err := Cfg.GetSection(APP)
 	if err != nil {
 		log.Fatalf("Fail to get section 'app': %v", err)
 	}
 
-	JwtSecret = sec.Key("JWT_SECRET").MustString("!@)*#)!@U#@*!@!)")
-	PageSize = sec.Key("PAGE_SIZE").MustInt(10)
+	JwtSecret = sec.Key(JWT_SECRET).MustString("!@)*#)!@U#@*!@!)")
+	PageSize = sec.Key(PAGE_SIZE).MustInt(10)
 }
