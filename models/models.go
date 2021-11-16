@@ -38,11 +38,6 @@ func init() {
 
 	dsnT := "%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local"
 	dsn := fmt.Sprintf(dsnT, user, password, host, dbName)
-	/*db, err = gorm.Open(dbType, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
-	user,
-	password,
-	host,
-	dbName))*/
 
 	db, err := gorm.Open(mysql.New(mysql.Config{
 		DriverName:                dbType,
