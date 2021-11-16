@@ -53,11 +53,11 @@ func init() {
 			SingularTable: true,                              // use singular table name, table for `User` would be `user` with this option enabled
 			NameReplacer:  strings.NewReplacer("CID", "Cid"), // use name replacer to change struct/field name before convert it to db name
 		},
-		Logger: db.Logger.LogMode(logger.Info),
 	})
 	if err != nil {
 		log.Println("数据库连接失败", err)
 	}
+	db.Logger = db.Logger.LogMode(logger.Info)
 	mysqlDB, err := db.DB()
 	if err != nil {
 		log.Println(err)
