@@ -15,9 +15,9 @@ import (
 var db *gorm.DB
 
 type Model struct {
-	ID         int `gorm:"primary_key" json:"id"`
-	CreatedOn  int `json:"created_on"`
-	ModifiedOn int `json:"modified_on"`
+	ID         int   `gorm:"primary_key" json:"id"`
+	CreatedOn  int64 `json:"created_on"`
+	ModifiedOn int64 `json:"modified_on"`
 }
 
 func init() {
@@ -39,7 +39,7 @@ func init() {
 	dsnT := "%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local"
 	dsn := fmt.Sprintf(dsnT, user, password, host, dbName)
 
-	db, err := gorm.Open(mysql.New(mysql.Config{
+	db, err = gorm.Open(mysql.New(mysql.Config{
 		DriverName:                dbType,
 		DSN:                       dsn,   // data source name
 		DefaultStringSize:         256,   // default size for string fields

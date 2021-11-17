@@ -12,7 +12,7 @@ type Article struct {
 	Title      string `json:"title"`
 	Desc       string `json:"desc"`
 	Content    string `json:"content"`
-	CreateBy   string `json:"create_by"`
+	CreatedBy   string `json:"create_by"`
 	ModifiedBy string `json:"modified_by"`
 	State      int    `json:"state"`
 }
