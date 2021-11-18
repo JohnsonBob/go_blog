@@ -71,8 +71,8 @@ func EditTag(context *gin.Context) {
 	valid := validation.Validation{}
 
 	id := context.Param("id")
-	valid.Numeric(id, "id")
-	valid.MaxSize(tag.Name, 100, "name")
+	valid.Numeric(id, "id").Message("id必须为数字")
+	valid.MaxSize(tag.Name, 100, "name").Message("名称最长为100字符")
 	valid.Required(tag.ModifiedBy, "modified_by").Message("修改人不能为空")
 	valid.MaxSize(tag.ModifiedBy, 100, "modified_by").Message("修改人最长为100字符")
 	valid.Range(tag.State, 0, 1, "state").Message("状态只允许0或1")

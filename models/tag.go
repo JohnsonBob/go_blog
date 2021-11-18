@@ -30,25 +30,24 @@ func ExistTagByName(name string) bool {
 }
 
 func ExistTagById(id int) bool {
-	var tag Tag
-	db.Select("id").Where("id = ?", id).First(&tag)
-	return tag.ID > 0
+	var count int64 = 0
+	db.Model(&Tag{}).Where("id = ?", id).Count(&count)
+	return count > 0
 }
 
 func AddTag(tag *Tag) {
 	db.Create(tag)
 }
 func (tag *Tag) BeforeCreate(tx *gorm.DB) error {
-	tag.CreatedOn = time.Now().Unix()
+	tx.Model(tag).UpdateColumn("CreatedOn", time.Now().Unix())
 	return nil
 }
 
 func (tag *Tag) BeforeUpdate(tx *gorm.DB) error {
-	tx.Model(tag).Update("ModifiedOn", time.Now().Unix())
-	//tag.ModifiedOn = time.Now().Unix()
+	tx.Model(tag).UpdateColumn("ModifiedOn", time.Now().Unix())
 	return nil
 }
 
 func EditTag(id int, tag *Tag) {
-	db.Model(tag).Where("id = ?", id).Updates(tag)
+	db.Model(tag).Where("id = ?", id).Updates(*tag)
 }
