@@ -58,9 +58,9 @@ func AddTag(context *gin.Context) {
 		} else {
 			code = e.ErrorExistTag
 		}
-		context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), make(map[string]string)))
+		context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), nil))
 	} else {
-		context.JSON(http.StatusOK, e.GetDefault(code, valid.Errors[0].Message, make(map[string]string)))
+		context.JSON(http.StatusOK, e.GetDefault(code, valid.Errors[0].Message, nil))
 	}
 }
 
@@ -86,13 +86,30 @@ func EditTag(context *gin.Context) {
 		} else {
 			code = e.ErrorNotExistTag
 		}
-		context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), make(map[string]string)))
+		context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), nil))
 	} else {
-		context.JSON(http.StatusOK, e.GetDefault(code, valid.Errors[0].Message, make(map[string]string)))
+		context.JSON(http.StatusOK, e.GetDefault(code, valid.Errors[0].Message, nil))
 	}
 
 }
 
 // DeleteTag 删除文章标签
 func DeleteTag(context *gin.Context) {
+	id := context.Param("id")
+	valid := validation.Validation{}
+	valid.Numeric(id, "id").Message("id必须为数字")
+	code := e.InvalidParams
+
+	if !valid.HasErrors() {
+		id := com.StrTo(id).MustInt()
+		if models.ExistTagById(id) {
+			code = e.SUCCESS
+			models.DeleteTag(id)
+		} else {
+			code = e.ErrorNotExistTag
+		}
+		context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), nil))
+	} else {
+		context.JSON(http.StatusOK, e.GetDefault(code, valid.Errors[0].Message, nil))
+	}
 }

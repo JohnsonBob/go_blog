@@ -49,5 +49,10 @@ func (tag *Tag) BeforeUpdate(tx *gorm.DB) error {
 }
 
 func EditTag(id int, tag *Tag) {
-	db.Model(tag).Where("id = ?", id).Updates(*tag)
+	tag.ID = id
+	db.Model(tag).Updates(*tag)
+}
+
+func DeleteTag(id int) {
+	db.Model(&Tag{}).Delete("id = ?", id)
 }
