@@ -1,6 +1,6 @@
 package models
 
-/*import (
+import (
 	"gorm.io/gorm"
 	"time"
 )
@@ -12,18 +12,57 @@ type Article struct {
 	Title      string `json:"title"`
 	Desc       string `json:"desc"`
 	Content    string `json:"content"`
-	CreatedBy   string `json:"create_by"`
+	CreatedBy  string `json:"create_by"`
 	ModifiedBy string `json:"modified_by"`
 	State      int    `json:"state"`
 }
 
 func (article *Article) BeforeCreate(tx *gorm.DB) error {
-	tx.Model(article).Update("CreatedOn", time.Now().Unix())
+	tx.Model(article).UpdateColumn("CreatedOn", time.Now().Unix())
 	return nil
 }
 
 func (article *Article) BeforeUpdate(tx *gorm.DB) error {
-	tx.Model(article).Update("ModifiedOn", time.Now().Unix())
-
+	tx.Model(article).UpdateColumn("ModifiedOn", time.Now().Unix())
 	return nil
-}*/
+}
+
+func GetArticle(id int) (article Article) {
+	db.Preload("Tag").Where("id = ?", id).First(&article)
+	return
+}
+
+func GetArticles(pageNum int, pageSize int, maps interface{}) (articles []Article) {
+	db.Preload("Tag").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles)
+	return
+}
+
+func GetArticleTotal(maps interface{}) (count int64) {
+	db.Model(&Article{}).Where(maps).Count(&count)
+	return
+}
+
+func ExistArticleByName(name string) bool {
+	var article Article
+	db.Select("id").Where("name = ?", name).First(&article)
+	return article.ID > 0
+}
+
+func ExistArticleById(id int) bool {
+	var count int64 = 0
+	db.Model(&Article{}).Where("id = ?", id).Count(&count)
+	return count > 0
+}
+
+func AddArticle(article *Article) {
+	db.Create(article)
+}
+
+func EditArticle(id int, article *Article) {
+	article.ID = id
+	db.Model(article).Updates(*article)
+}
+
+func DeleteArticle(id int) {
+	db.Model(&Article{}).Delete("id = ?", id)
+}
