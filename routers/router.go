@@ -2,6 +2,7 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
+	"go_blog/pkg/middleware"
 	"go_blog/pkg/setting"
 	"go_blog/routers/api"
 	v1 "go_blog/routers/api/v1"
@@ -16,6 +17,7 @@ func InitRouter() *gin.Engine {
 	engine.POST("/auth", api.GetAuth)
 
 	group := engine.Group("/api/v1")
+	group.Use(middleware.JWT())
 	{
 		//获取标签列表
 		group.GET("/tags", v1.GetTags)
