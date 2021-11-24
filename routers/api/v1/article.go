@@ -8,7 +8,6 @@ import (
 	"go_blog/pkg/e"
 	"go_blog/pkg/setting"
 	"go_blog/pkg/util"
-	"log"
 	"net/http"
 )
 
@@ -76,7 +75,7 @@ func AddArticle(context *gin.Context) {
 	err := context.Bind(&article)
 	code := e.InvalidParams
 	if err != nil {
-		log.Printf(err.Error())
+		util.Printf(err.Error())
 		context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), nil))
 		return
 	}
@@ -111,7 +110,7 @@ func EditArticle(context *gin.Context) {
 
 	err := context.Bind(&article)
 	if err != nil {
-		log.Printf(err.Error())
+		util.Printf(err.Error())
 		context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), nil))
 		return
 	}

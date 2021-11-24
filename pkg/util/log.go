@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"github.com/astaxie/beego/validation"
 	"go_blog/pkg/logging"
 	"log"
@@ -13,4 +14,19 @@ func PrintLog(valid *validation.Validation) {
 			logging.Info(err.Key, err.Message)
 		}
 	}
+}
+
+func Printf(format string, v ...interface{}) {
+	log.Printf(format, v)
+	logging.Info(fmt.Printf(format, v))
+}
+
+func Println(v ...interface{}) {
+	log.Println(v)
+	logging.Info(v)
+}
+
+func Fatal(v ...interface{}) {
+	logging.Info(v)
+	log.Fatal(v)
 }

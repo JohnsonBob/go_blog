@@ -14,7 +14,7 @@ func JWT() gin.HandlerFunc {
 		var code = e.SUCCESS
 		authorization := context.GetHeader("Authorization")
 		if fields := strings.Fields(authorization); len(fields) < 2 {
-			code = e.InvalidParams
+			code = e.ErrorAuthCheckTokenFail
 		} else {
 			token, err := util.ParseToken(fields[1])
 			if err != nil {

@@ -3,11 +3,11 @@ package models
 import (
 	"fmt"
 	"go_blog/pkg/setting"
+	"go_blog/pkg/util"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
-	"log"
 	"strings"
 	"time"
 )
@@ -27,7 +27,7 @@ func init() {
 	)
 	sec, err := setting.Cfg.GetSection(setting.DATABASE)
 	if err != nil {
-		log.Fatal(2, "Fail to get section 'database': %v", err)
+		util.Fatal(2, "Fail to get section 'database': %v", err)
 	}
 	dbType = sec.Key(setting.TYPE).String()
 	dbName = sec.Key(setting.NAME).String()
@@ -55,12 +55,12 @@ func init() {
 		},
 	})
 	if err != nil {
-		log.Println("数据库连接失败", err)
+		util.Println("数据库连接失败", err)
 	}
 	db.Logger = db.Logger.LogMode(logger.Info)
 	mysqlDB, err := db.DB()
 	if err != nil {
-		log.Println(err)
+		util.Println(err)
 	}
 	// SetMaxIdleConns 设置空闲连接池中连接的最大数量
 	mysqlDB.SetMaxIdleConns(10)
