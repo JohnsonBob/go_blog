@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  mysql:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    volumes:
+      - ./mysql/conf:/etc/mysql/conf.d
+      - ./mysql/data:/var/lib/mysql
+    ports:
+      - 3306:3306
+  alpine:
+      image: alpine
+      command: /bin/sh -c "sleep 5; cd /opt/go_blog/go_blog && ./go_blog"
+      restart: always
+      volumes:
+        - ./go_blog:/opt/go_blog/go_blog
+      ports:
+        - 8000:8000
