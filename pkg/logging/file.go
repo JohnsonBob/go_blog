@@ -19,7 +19,7 @@ func getLogFilePath() string {
 }
 
 func getLogFileFullPath() string {
-	path := getLogFilePath
+	path := getLogFilePath()
 	suffixPath := fmt.Sprintf("%s-%s.%s", LogSaveName, time.Now().Format(TimeFormat), LogFileExt)
 	return fmt.Sprintf("%s%s", path, suffixPath)
 }
