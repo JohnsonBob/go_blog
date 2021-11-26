@@ -57,3 +57,7 @@ func EditArticle(id int, article *Article) {
 func DeleteArticle(id int) {
 	db.Model(&Article{}).Delete("id = ?", id)
 }
+
+func CleanAllArticle() {
+	db.Unscoped().Where("deleted_at is not null").Delete(&Article{})
+}

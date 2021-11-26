@@ -46,6 +46,9 @@ func EditTag(id int, tag *Tag) {
 }
 
 func DeleteTag(id int) {
-	//db.Model(&Tag{}).Delete("id = ?", id)
-	_ = db.Where("id = ?", id).Delete(&Tag{}).Error
+	db.Model(&Tag{}).Delete("id = ?", id)
+}
+
+func CleanAllTag() {
+	db.Unscoped().Where("deleted_at is not null").Delete(&Tag{})
 }

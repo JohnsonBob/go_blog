@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"go_blog/pkg"
 	"go_blog/pkg/setting"
 	"go_blog/pkg/util"
 	"go_blog/routers"
@@ -27,6 +28,9 @@ func main() {
 			util.Printf("Listen: %s\n", err)
 		}
 	}()
+
+	//启动定时器
+	go pkg.StartClearDataBaseCron()
 
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)

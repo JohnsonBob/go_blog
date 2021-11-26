@@ -54,7 +54,7 @@ func init() {
 			SingularTable: true,                              // use singular table name, table for `User` would be `user` with this option enabled
 			NameReplacer:  strings.NewReplacer("CID", "Cid"), // use name replacer to change struct/field name before convert it to db name
 		},
-		DisableForeignKeyConstraintWhenMigrating: false, // 禁用AutoMigrate 自动创建数据库外键约束
+		DisableForeignKeyConstraintWhenMigrating: true, // 禁用AutoMigrate 自动创建数据库外键约束
 	})
 	if err != nil {
 		util.Println("数据库连接失败", err)
