@@ -1,30 +1,19 @@
 package models
 
 import (
-	"gorm.io/gorm"
 	"time"
 )
 
 type Article struct {
 	Model
-	TagId      int    `json:"tag_id" gorm:"index"`
-	Tag        Tag    `json:"tag"`
+	TagId      int    `json:"tag_id"`
+	Tag        *Tag   `json:"tag"`
 	Title      string `json:"title"`
 	Desc       string `json:"desc"`
 	Content    string `json:"content"`
 	CreatedBy  string `json:"create_by"`
 	ModifiedBy string `json:"modified_by"`
 	State      int    `json:"state"`
-}
-
-func (article *Article) BeforeCreate(tx *gorm.DB) error {
-	tx.Model(article).UpdateColumn("CreatedOn", time.Now().Unix())
-	return nil
-}
-
-func (article *Article) BeforeUpdate(tx *gorm.DB) error {
-	tx.Model(article).UpdateColumn("ModifiedOn", time.Now().Unix())
-	return nil
 }
 
 func GetArticle(id int) (article Article) {
@@ -55,11 +44,13 @@ func ExistArticleById(id int) bool {
 }
 
 func AddArticle(article *Article) {
+	article.CreatedOn = time.Now().Unix()
 	db.Create(article)
 }
 
 func EditArticle(id int, article *Article) {
 	article.ID = id
+	article.ModifiedOn = time.Now().Unix()
 	db.Model(article).Updates(*article)
 }
 

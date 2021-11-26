@@ -126,6 +126,7 @@ func EditArticle(context *gin.Context) {
 	valid.Required(article.ModifiedBy, "modified_by").Message("修改人不能为空")
 	valid.MaxSize(article.ModifiedBy, 100, "modified_by").Message("修改人最长为100字符")
 	valid.Required(article.CreatedBy, "created_by").Message("创建人不能为空")
+	valid.Range(article.State, 0, 1, "state").Message("状态只允许0或1")
 
 	if !valid.HasErrors() {
 		id := com.StrTo(id).MustInt()

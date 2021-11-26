@@ -1,7 +1,6 @@
 package models
 
 import (
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -36,23 +35,17 @@ func ExistTagById(id int) bool {
 }
 
 func AddTag(tag *Tag) {
+	tag.CreatedOn = time.Now().Unix()
 	db.Create(tag)
-}
-func (tag *Tag) BeforeCreate(tx *gorm.DB) error {
-	tx.Model(tag).UpdateColumn("CreatedOn", time.Now().Unix())
-	return nil
-}
-
-func (tag *Tag) BeforeUpdate(tx *gorm.DB) error {
-	tx.Model(tag).UpdateColumn("ModifiedOn", time.Now().Unix())
-	return nil
 }
 
 func EditTag(id int, tag *Tag) {
+	tag.ModifiedOn = time.Now().Unix()
 	tag.ID = id
 	db.Model(tag).Updates(*tag)
 }
 
 func DeleteTag(id int) {
-	db.Model(&Tag{}).Delete("id = ?", id)
+	//db.Model(&Tag{}).Delete("id = ?", id)
+	_ = db.Where("id = ?", id).Delete(&Tag{}).Error
 }

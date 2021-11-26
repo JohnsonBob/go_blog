@@ -15,9 +15,10 @@ import (
 var db *gorm.DB
 
 type Model struct {
-	ID         int   `gorm:"primary_key" json:"id"`
-	CreatedOn  int64 `json:"created_on"`
-	ModifiedOn int64 `json:"modified_on"`
+	ID         int            `gorm:"primary_key" json:"id"`
+	CreatedOn  int64          `json:"created_on"`
+	ModifiedOn int64          `json:"modified_on"`
+	DeletedAt  gorm.DeletedAt `json:"deleted_at"`
 }
 
 func init() {
@@ -53,6 +54,7 @@ func init() {
 			SingularTable: true,                              // use singular table name, table for `User` would be `user` with this option enabled
 			NameReplacer:  strings.NewReplacer("CID", "Cid"), // use name replacer to change struct/field name before convert it to db name
 		},
+		DisableForeignKeyConstraintWhenMigrating: false, // 禁用AutoMigrate 自动创建数据库外键约束
 	})
 	if err != nil {
 		util.Println("数据库连接失败", err)
@@ -64,12 +66,20 @@ func init() {
 	}
 	// SetMaxIdleConns 设置空闲连接池中连接的最大数量
 	mysqlDB.SetMaxIdleConns(10)
-
 	// SetMaxOpenConns 设置打开数据库连接的最大数量。
 	mysqlDB.SetMaxOpenConns(100)
-
 	// SetConnMaxLifetime 设置了连接可复用的最大时间。
 	mysqlDB.SetConnMaxLifetime(time.Hour)
+
+	if err = db.AutoMigrate(&Article{}); err != nil {
+		util.Println(err)
+	}
+	if err = db.AutoMigrate(&Auth{}); err != nil {
+		util.Println(err)
+	}
+	if err = db.AutoMigrate(&Auth{}); err != nil {
+		util.Println(err)
+	}
 }
 
 func CloseDB() {
