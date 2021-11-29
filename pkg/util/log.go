@@ -30,3 +30,8 @@ func Fatal(v ...interface{}) {
 	logging.Info(v)
 	log.Fatal(v)
 }
+
+func Fatalf(format string, v ...interface{}) {
+	logging.Info(fmt.Sprintf(format, v...))
+	log.Fatal(v)
+}

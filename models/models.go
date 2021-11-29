@@ -26,16 +26,13 @@ func init() {
 		err                                               error
 		dbType, dbName, user, password, host, tablePrefix string
 	)
-	sec, err := setting.Cfg.GetSection(setting.DATABASE)
-	if err != nil {
-		util.Fatal(2, "Fail to get section 'database': %v", err)
-	}
-	dbType = sec.Key(setting.TYPE).String()
-	dbName = sec.Key(setting.NAME).String()
-	user = sec.Key(setting.USER).String()
-	password = sec.Key(setting.PASSWORD).String()
-	host = sec.Key(setting.HOST).String()
-	tablePrefix = sec.Key(setting.TABLE_PREFIX).String()
+
+	dbType = setting.Config.Database.Type
+	dbName = setting.Config.Database.Name
+	user = setting.Config.Database.User
+	password = setting.Config.Database.Password
+	host = setting.Config.Database.Host
+	tablePrefix = setting.Config.Database.TablePrefix
 
 	dsnT := "%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local"
 	dsn := fmt.Sprintf(dsnT, user, password, host, dbName)
