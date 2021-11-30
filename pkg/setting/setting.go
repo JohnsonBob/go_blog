@@ -57,4 +57,7 @@ func init() {
 	if err != nil {
 		log.Fatalf("Cfg.MapTo Setting err: %v", err)
 	}
+
+	Config.Server.WriteTimeout *= time.Second
+	Config.Server.ReadTimeout *= time.Second
 }
