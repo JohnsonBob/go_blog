@@ -50,5 +50,5 @@ func DeleteTag(id int) {
 }
 
 func CleanAllTag() {
-	db.Unscoped().Where("deleted_at is not null").Delete(&Tag{})
+	db.Unscoped().Where("deleted_at IS NOT NULL").Delete(&Tag{})
 }

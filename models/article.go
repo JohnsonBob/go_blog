@@ -59,5 +59,5 @@ func DeleteArticle(id int) {
 }
 
 func CleanAllArticle() {
-	db.Unscoped().Where("deleted_at is not null").Delete(&Article{})
+	db.Unscoped().Where("deleted_at IS NOT NULL").Delete(&Article{})
 }
