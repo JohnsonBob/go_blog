@@ -2,42 +2,45 @@ package logging
 
 import (
 	"fmt"
+	"go_blog/pkg/file"
+	"go_blog/pkg/setting"
 	"log"
 	"os"
 	"time"
 )
 
-var (
-	LogSavePath = "runtime/logs/"
-	LogSaveName = "log"
-	LogFileExt  = "log"
-	TimeFormat  = "20060102"
-)
-
 func getLogFilePath() string {
-	return fmt.Sprintf("%s", LogSavePath)
+	return fmt.Sprintf("%s%s", setting.Config.App.RuntimeRootPath, setting.Config.App.LogSavePath)
 }
 
 func getLogFileFullPath() string {
 	path := getLogFilePath()
-	suffixPath := fmt.Sprintf("%s-%s.%s", LogSaveName, time.Now().Format(TimeFormat), LogFileExt)
+	suffixPath := fmt.Sprintf("%s-%s.%s", setting.Config.App.LogSaveName, time.Now().Format(setting.Config.App.TimeFormat), setting.Config.App.LogFileExt)
 	return fmt.Sprintf("%s%s", path, suffixPath)
 }
 
-func openLogFile(filePath string) *os.File {
-	_, err := os.Stat(filePath)
-	switch {
-	case os.IsNotExist(err):
-		mkDir()
-	case os.IsPermission(err):
-		log.Fatalf("Permission :%v", err)
+func getLogFileName() string {
+	suffixPath := fmt.Sprintf("%s-%s.%s", setting.Config.App.LogSaveName, time.Now().Format(setting.Config.App.TimeFormat), setting.Config.App.LogFileExt)
+	return suffixPath
+}
+
+func openLogFile(filePath string, fileName string) *os.File {
+	src := filePath + fileName
+	if file.CheckPermission(src) {
+		log.Fatalf("file.CheckPermission Permission denied")
+
+	}
+	err := file.IsNotExistMkDir(filePath)
+	if err != nil {
+		log.Fatalf("file.IsNotExistMkDir src: %s, err: %v", filePath, err)
 	}
 
-	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := file.Open(src, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatalf("Fail to OpenFile :%v", err)
+
 	}
-	return file
+	return f
 }
 
 func mkDir() {

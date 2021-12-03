@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"go_blog/models"
 	"go_blog/pkg"
+	"go_blog/pkg/logging"
 	"go_blog/pkg/setting"
 	"go_blog/pkg/util"
 	"go_blog/routers"
@@ -14,6 +16,10 @@ import (
 )
 
 func main() {
+	setting.Setup()
+	models.Setup()
+	logging.Setup()
+
 	engine := routers.InitRouter()
 	server := &http.Server{
 		Addr:           fmt.Sprintf(":%d", setting.Config.Server.HttpPort),

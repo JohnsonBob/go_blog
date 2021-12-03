@@ -6,14 +6,15 @@ import (
 
 type Article struct {
 	Model
-	TagId      int    `json:"tag_id"`
-	Tag        *Tag   `json:"tag"`
-	Title      string `json:"title"`
-	Desc       string `json:"desc"`
-	Content    string `json:"content"`
-	CreatedBy  string `json:"create_by"`
-	ModifiedBy string `json:"modified_by"`
-	State      int    `json:"state"`
+	TagId         int    `json:"tag_id"`
+	Tag           *Tag   `json:"tag"`
+	Title         string `json:"title"`
+	Desc          string `json:"desc"`
+	Content       string `json:"content"`
+	CreatedBy     string `json:"create_by"`
+	ModifiedBy    string `json:"modified_by"`
+	State         int    `json:"state"`
+	CoverImageUrl string `json:"cover_image_url" gorm:"type:char(255);comment:封面图片地址"`
 }
 
 func GetArticle(id int) (article Article) {

@@ -14,7 +14,7 @@ type App struct {
 	ImagePrefixUrl  string
 	ImageSavePath   string
 
-	ImageMaxSize   int
+	ImageMaxSize   int64
 	ImageAllowExts []string
 
 	LogSavePath string
@@ -47,7 +47,7 @@ type Setting struct {
 
 var Config Setting
 
-func init() {
+func Setup() {
 	var err error
 	cfg, err := ini.Load("./conf/app.ini")
 	if err != nil {
