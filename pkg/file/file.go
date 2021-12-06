@@ -1,13 +1,24 @@
 package file
 
 import (
+	"io/ioutil"
+	"mime/multipart"
 	"os"
 	"path"
 )
 
 func GetSize(filePath string) (int64, error) {
 	stat, err := os.Stat(filePath)
-	return stat.Size(), err
+	if err != nil {
+		return 0, err
+	} else {
+		return stat.Size(), err
+	}
+}
+
+func GetSizeFromFile(f multipart.File) (int64, error) {
+	content, err := ioutil.ReadAll(f)
+	return int64(len(content)), err
 }
 
 func GetExt(filePath string) string {

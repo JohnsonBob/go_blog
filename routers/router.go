@@ -4,8 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"go_blog/pkg/middleware"
 	"go_blog/pkg/setting"
+	"go_blog/pkg/upload"
 	"go_blog/routers/api"
 	v1 "go_blog/routers/api/v1"
+	"net/http"
 )
 
 func InitRouter() *gin.Engine {
@@ -15,6 +17,7 @@ func InitRouter() *gin.Engine {
 	gin.SetMode(setting.Config.Server.RunMode)
 
 	engine.POST("/auth", api.GetAuth)
+	engine.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
 
 	group := engine.Group("/api/v1")
 	group.Use(middleware.JWT())
@@ -38,6 +41,8 @@ func InitRouter() *gin.Engine {
 		group.PUT("/articles/:id", v1.EditArticle)
 		//删除指定文章
 		group.DELETE("/articles/:id", v1.DeleteArticle)
+
+		group.POST("/upload", v1.UploadImage)
 	}
 
 	return engine

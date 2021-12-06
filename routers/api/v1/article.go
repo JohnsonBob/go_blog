@@ -85,6 +85,8 @@ func AddArticle(context *gin.Context) {
 	valid.Required(article.Desc, "desc").Message("简述不能为空")
 	valid.Required(article.Content, "content").Message("内容不能为空")
 	valid.Required(article.CreatedBy, "created_by").Message("创建人不能为空")
+	valid.Required(article.CoverImageUrl, "cover_image_url").Message("封面图片地址不能为空")
+	valid.MaxSize(article.CoverImageUrl, 255, "cover_image_url").Message("封面图片地址最长为255字符")
 	valid.Range(article.State, 0, 1, "state").Message("状态只允许0或1")
 
 	if !valid.HasErrors() {
@@ -127,6 +129,8 @@ func EditArticle(context *gin.Context) {
 	valid.MaxSize(article.ModifiedBy, 100, "modified_by").Message("修改人最长为100字符")
 	valid.Required(article.CreatedBy, "created_by").Message("创建人不能为空")
 	valid.Range(article.State, 0, 1, "state").Message("状态只允许0或1")
+	valid.Required(article.CoverImageUrl, "cover_image_url").Message("封面图片地址不能为空")
+	valid.MaxSize(article.CoverImageUrl, 255, "cover_image_url").Message("封面图片地址最长为255字符")
 
 	if !valid.HasErrors() {
 		id := com.StrTo(id).MustInt()
