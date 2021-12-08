@@ -7,6 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.7.4
 	github.com/go-ini/ini v1.64.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/robfig/cron v1.2.0
 	github.com/unknwon/com v1.0.1
 	gorm.io/driver/mysql v1.2.0

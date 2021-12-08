@@ -39,10 +39,19 @@ type Database struct {
 	TablePrefix string
 }
 
+type Redis struct {
+	Host        string
+	Password    string
+	MaxIdle     int
+	MaxActive   int
+	IdleTimeout int
+}
+
 type Setting struct {
 	App      *App
 	Server   *Server
 	Database *Database
+	Redis    *Redis
 }
 
 var Config Setting
