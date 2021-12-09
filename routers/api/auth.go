@@ -3,10 +3,10 @@ package api
 import (
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
+	"go_blog/app"
 	"go_blog/models"
 	"go_blog/pkg/e"
 	"go_blog/pkg/util"
-	"net/http"
 )
 
 type user struct {
@@ -15,6 +15,7 @@ type user struct {
 }
 
 func GetAuth(ctx *gin.Context) {
+	response := app.BaseResponse{Ctx: ctx}
 	user := user{}
 	_ = ctx.Bind(&user)
 	valid := validation.Validation{}
@@ -35,9 +36,9 @@ func GetAuth(ctx *gin.Context) {
 		} else {
 			code = e.ErrorAuth
 		}
-		ctx.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), data))
+		response.Response(code, data)
 	} else {
 		util.PrintLog(&valid)
-		ctx.JSON(http.StatusOK, e.GetDefault(code, valid.Errors[0].Message, nil))
+		response.ResponseWithMessage(code, valid.Errors[0].Message, data)
 	}
 }

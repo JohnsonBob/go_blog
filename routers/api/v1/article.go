@@ -4,16 +4,16 @@ import (
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
+	"go_blog/app"
 	"go_blog/models"
 	"go_blog/pkg/e"
 	"go_blog/pkg/setting"
 	"go_blog/pkg/util"
-	"net/http"
 )
 
 // GetArticle 获取单个文章
 func GetArticle(context *gin.Context) {
-
+	response := app.BaseResponse{Ctx: context}
 	id := context.Param("id")
 
 	valid := validation.Validation{}
@@ -29,16 +29,17 @@ func GetArticle(context *gin.Context) {
 		} else {
 			code = e.ErrorNotExistArticle
 		}
-		context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), data))
+		response.Response(code, data)
 	} else {
 		util.PrintLog(&valid)
-		context.JSON(http.StatusOK, e.GetDefault(code, valid.Errors[0].Message, data))
+		response.ResponseWithMessage(code, valid.Errors[0].Message, data)
 	}
 
 }
 
 // GetArticles 获取多个文章
 func GetArticles(context *gin.Context) {
+	response := app.BaseResponse{Ctx: context}
 	maps := make(map[string]interface{})
 	data := make(map[string]interface{})
 	title := context.Query("title")
@@ -62,21 +63,23 @@ func GetArticles(context *gin.Context) {
 		}
 		data["lists"] = models.GetArticles(util.GetPage(context), setting.Config.App.PageSize, maps)
 		data["total"] = models.GetArticleTotal(maps)
-		context.JSON(http.StatusOK, e.GetDefault(e.SUCCESS, e.GetMsg(e.SUCCESS), data))
+		response.Response(e.SUCCESS, data)
 	} else {
 		util.PrintLog(&valid)
-		context.JSON(http.StatusOK, e.GetDefault(e.InvalidParams, valid.Errors[0].Message, nil))
+		response.ResponseWithMessage(e.InvalidParams, valid.Errors[0].Message, nil)
+
 	}
 }
 
 //AddArticle 新增文章
 func AddArticle(context *gin.Context) {
+	response := app.BaseResponse{Ctx: context}
 	article := models.Article{}
 	err := context.Bind(&article)
 	code := e.InvalidParams
 	if err != nil {
 		util.Printf(err.Error())
-		context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), nil))
+		response.Response(code, nil)
 		return
 	}
 
@@ -98,14 +101,16 @@ func AddArticle(context *gin.Context) {
 		}
 	} else {
 		util.PrintLog(&valid)
-		context.JSON(http.StatusOK, e.GetDefault(code, valid.Errors[0].Message, nil))
+		response.ResponseWithMessage(code, valid.Errors[0].Message, nil)
 		return
 	}
-	context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), nil))
+	response.Response(code, nil)
 }
 
 // EditArticle 修改文章
 func EditArticle(context *gin.Context) {
+	response := app.BaseResponse{Ctx: context}
+
 	article := models.Article{}
 	code := e.InvalidParams
 	id := context.Param("id")
@@ -113,7 +118,7 @@ func EditArticle(context *gin.Context) {
 	err := context.Bind(&article)
 	if err != nil {
 		util.Printf(err.Error())
-		context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), nil))
+		response.Response(code, nil)
 		return
 	}
 
@@ -144,16 +149,17 @@ func EditArticle(context *gin.Context) {
 				code = e.SUCCESS
 			}
 		}
-		context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), nil))
+		response.Response(code, nil)
 	} else {
 		util.PrintLog(&valid)
-		context.JSON(http.StatusOK, e.GetDefault(code, valid.Errors[0].Message, nil))
+		response.ResponseWithMessage(code, valid.Errors[0].Message, nil)
 	}
 
 }
 
 // DeleteArticle 删除文章
 func DeleteArticle(context *gin.Context) {
+	response := app.BaseResponse{Ctx: context}
 	id := context.Param("id")
 	valid := validation.Validation{}
 	valid.Numeric(id, "id").Message("id必须为数字")
@@ -167,8 +173,8 @@ func DeleteArticle(context *gin.Context) {
 		} else {
 			code = e.ErrorNotExistArticle
 		}
-		context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), nil))
+		response.Response(code, nil)
 	} else {
-		context.JSON(http.StatusOK, e.GetDefault(code, valid.Errors[0].Message, nil))
+		response.ResponseWithMessage(code, valid.Errors[0].Message, nil)
 	}
 }

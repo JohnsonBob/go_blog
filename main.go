@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go_blog/models"
 	"go_blog/pkg"
+	"go_blog/pkg/gredis"
 	"go_blog/pkg/logging"
 	"go_blog/pkg/setting"
 	"go_blog/pkg/util"
@@ -17,6 +18,7 @@ import (
 
 func main() {
 	setting.Setup()
+	gredis.SetUp()
 	models.Setup()
 	logging.Setup()
 

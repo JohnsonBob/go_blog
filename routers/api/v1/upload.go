@@ -2,13 +2,14 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
+	"go_blog/app"
 	"go_blog/pkg/e"
 	"go_blog/pkg/upload"
 	"go_blog/pkg/util"
-	"net/http"
 )
 
 func UploadImage(context *gin.Context) {
+	response := app.BaseResponse{Ctx: context}
 	code := e.SUCCESS
 	data := make(map[string]string)
 
@@ -16,7 +17,7 @@ func UploadImage(context *gin.Context) {
 	if err != nil {
 		util.Println(err)
 		code = e.ERROR
-		context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), data))
+		response.Response(code, data)
 		return
 	}
 
@@ -44,5 +45,5 @@ func UploadImage(context *gin.Context) {
 			}
 		}
 	}
-	context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), data))
+	response.Response(code, data)
 }

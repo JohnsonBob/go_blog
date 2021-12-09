@@ -4,15 +4,16 @@ import (
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
+	"go_blog/app"
 	"go_blog/models"
 	"go_blog/pkg/e"
 	"go_blog/pkg/setting"
 	"go_blog/pkg/util"
-	"net/http"
 )
 
 // GetTags 获取多个文章标签
 func GetTags(context *gin.Context) {
+	response := app.BaseResponse{Ctx: context}
 	maps := make(map[string]interface{})
 	data := make(map[string]interface{})
 
@@ -30,16 +31,12 @@ func GetTags(context *gin.Context) {
 
 	data["lists"] = models.GetTags(util.GetPage(context), setting.Config.App.PageSize, maps)
 	data["total"] = models.GetTagTotal(maps)
-
-	context.JSON(http.StatusOK, gin.H{
-		"code": code,
-		"msg":  e.GetMsg(code),
-		"data": data,
-	})
+	response.Response(code, data)
 }
 
 // AddTag 新增文章标签
 func AddTag(context *gin.Context) {
+	response := app.BaseResponse{Ctx: context}
 	tag := models.Tag{}
 	_ = context.Bind(&tag)
 
@@ -58,14 +55,15 @@ func AddTag(context *gin.Context) {
 		} else {
 			code = e.ErrorExistTag
 		}
-		context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), nil))
+		response.Response(code, nil)
 	} else {
-		context.JSON(http.StatusOK, e.GetDefault(code, valid.Errors[0].Message, nil))
+		response.ResponseWithMessage(code, valid.Errors[0].Message, nil)
 	}
 }
 
 // EditTag 修改文章标签
 func EditTag(context *gin.Context) {
+	response := app.BaseResponse{Ctx: context}
 	tag := models.Tag{}
 	_ = context.Bind(&tag)
 	valid := validation.Validation{}
@@ -86,15 +84,17 @@ func EditTag(context *gin.Context) {
 		} else {
 			code = e.ErrorNotExistTag
 		}
-		context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), nil))
+		response.Response(code, nil)
 	} else {
-		context.JSON(http.StatusOK, e.GetDefault(code, valid.Errors[0].Message, nil))
+		response.ResponseWithMessage(code, valid.Errors[0].Message, nil)
+
 	}
 
 }
 
 // DeleteTag 删除文章标签
 func DeleteTag(context *gin.Context) {
+	response := app.BaseResponse{Ctx: context}
 	id := context.Param("id")
 	valid := validation.Validation{}
 	valid.Numeric(id, "id").Message("id必须为数字")
@@ -108,8 +108,8 @@ func DeleteTag(context *gin.Context) {
 		} else {
 			code = e.ErrorNotExistTag
 		}
-		context.JSON(http.StatusOK, e.GetDefault(code, e.GetMsg(code), nil))
+		response.Response(code, nil)
 	} else {
-		context.JSON(http.StatusOK, e.GetDefault(code, valid.Errors[0].Message, nil))
+		response.ResponseWithMessage(code, valid.Errors[0].Message, nil)
 	}
 }

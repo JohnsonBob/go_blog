@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
+	"go_blog/app"
 	"go_blog/pkg/e"
 	"go_blog/pkg/util"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 
 func JWT() gin.HandlerFunc {
 	return func(context *gin.Context) {
+		response := app.BaseResponse{Ctx: context}
 		var code = e.SUCCESS
 		authorization := context.GetHeader("Authorization")
 		if fields := strings.Fields(authorization); len(fields) < 2 {
@@ -25,7 +27,7 @@ func JWT() gin.HandlerFunc {
 		}
 
 		if code != e.SUCCESS {
-			context.JSON(http.StatusUnauthorized, e.GetDefault(code, e.GetMsg(code), nil))
+			response.ResponseWithHttpCode(http.StatusUnauthorized, code, nil)
 			context.Abort()
 			return
 		}

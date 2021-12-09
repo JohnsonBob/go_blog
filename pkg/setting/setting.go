@@ -44,7 +44,7 @@ type Redis struct {
 	Password    string
 	MaxIdle     int
 	MaxActive   int
-	IdleTimeout int
+	IdleTimeout time.Duration
 }
 
 type Setting struct {
@@ -69,4 +69,5 @@ func Setup() {
 
 	Config.Server.WriteTimeout *= time.Second
 	Config.Server.ReadTimeout *= time.Second
+	Config.Redis.IdleTimeout *= time.Second
 }
