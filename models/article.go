@@ -17,7 +17,7 @@ type Article struct {
 	CoverImageUrl string `json:"cover_image_url" gorm:"type:char(255);comment:封面图片地址"`
 }
 
-func GetArticle(id int) (article Article) {
+func GetArticle(id int) (article *Article) {
 	db.Preload("Tag").Where("id = ?", id).First(&article)
 	return
 }

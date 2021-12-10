@@ -9,6 +9,7 @@ import (
 	"go_blog/pkg/e"
 	"go_blog/pkg/setting"
 	"go_blog/pkg/util"
+	"go_blog/service/article_service"
 )
 
 // GetArticle 获取单个文章
@@ -21,19 +22,25 @@ func GetArticle(context *gin.Context) {
 
 	code := e.InvalidParams
 	var data interface{}
-	if !valid.HasErrors() {
-		idInt := com.StrTo(id).MustInt()
-		if models.ExistArticleById(idInt) {
-			data = models.GetArticle(idInt)
-			code = e.SUCCESS
-		} else {
-			code = e.ErrorNotExistArticle
-		}
-		response.Response(code, data)
-	} else {
+	if valid.HasErrors() {
 		util.PrintLog(&valid)
 		response.ResponseWithMessage(code, valid.Errors[0].Message, data)
+		return
 	}
+	idInt := com.StrTo(id).MustInt()
+	if models.ExistArticleById(idInt) {
+		dataTemp, err := article_service.GetOne(idInt)
+		if err != nil {
+			code = e.ErrorGetArticleFail
+			response.Response500(code, data)
+			return
+		}
+		code = e.SUCCESS
+		data = dataTemp
+	} else {
+		code = e.ErrorNotExistArticle
+	}
+	response.Response(code, data)
 
 }
 

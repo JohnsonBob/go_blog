@@ -21,3 +21,6 @@ func (response *BaseResponse) ResponseWithMessage(errCode int, message string, d
 func (response *BaseResponse) ResponseWithHttpCode(httpCode int, errCode int, data interface{}) {
 	response.Ctx.JSON(httpCode, e.GetDefault(errCode, e.GetMsg(errCode), data))
 }
+func (response *BaseResponse) Response500(errCode int, data interface{}) {
+	response.Ctx.JSON(http.StatusInternalServerError, e.GetDefault(errCode, e.GetMsg(errCode), data))
+}

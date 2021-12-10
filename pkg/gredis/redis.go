@@ -53,7 +53,7 @@ func Set(key string, data interface{}, time int) error {
 	return nil
 }
 
-func isExists(key string) bool {
+func IsExists(key string) bool {
 	conn := RedisConn.Get()
 	defer func(conn redis.Conn) { _ = conn.Close() }(conn)
 	isExists, err := redis.Bool(conn.Do("EXISTS", key))
@@ -67,9 +67,12 @@ func isExists(key string) bool {
 func Get(key string) ([]byte, error) {
 	conn := RedisConn.Get()
 	defer func() { _ = conn.Close() }()
-	bytes, err := redis.Bytes(conn.Do("GET", key))
+	reply, err := conn.Do("GET", key)
+	if reply == nil && err == nil {
+		return nil, nil
+	}
+	bytes, err := redis.Bytes(reply, err)
 	if err != nil {
-
 		return nil, err
 	}
 	return bytes, nil
@@ -78,14 +81,21 @@ func Get(key string) ([]byte, error) {
 func Delete(key string) (bool, error) {
 	conn := RedisConn.Get()
 	defer func() { _ = conn.Close() }()
-	return redis.Bool(conn.Do("DEL", key))
+	reply, err := conn.Do("DEL", key)
+	if reply == nil && err == nil {
+		return false, nil
+	}
+	return redis.Bool(reply, err)
 }
 
 func LikeDeletes(key string) error {
 	conn := RedisConn.Get()
 	defer func() { _ = conn.Close() }()
-
-	keys, err := redis.Strings(conn.Do("KEYS", "*"+key+"*"))
+	reply, err := conn.Do("KEYS", "*"+key+"*")
+	if reply == nil && err == nil {
+		return nil
+	}
+	keys, err := redis.Strings(reply, err)
 	if err != nil {
 		return err
 	}

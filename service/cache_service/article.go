@@ -14,11 +14,11 @@ type Article struct {
 	PageSize int
 }
 
-func GetArticleKey(article *Article) string {
+func (article *Article) GetArticleKey() string {
 	return e.CacheArticle + "_" + strconv.Itoa(article.ID)
 }
 
-func GetArticlesKey(article *Article) string {
+func (article *Article) GetArticlesKey() string {
 	keys := []string{
 		e.CacheArticle,
 		"LIST",
