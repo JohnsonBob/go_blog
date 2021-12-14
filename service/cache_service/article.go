@@ -7,15 +7,16 @@ import (
 )
 
 type Article struct {
-	ID       int
-	TagId    int
-	State    int
-	PageNum  int
-	PageSize int
+	ID       *int
+	TagId    *int
+	State    *int
+	PageNum  *int
+	PageSize *int
+	Title    *string
 }
 
 func (article *Article) GetArticleKey() string {
-	return e.CacheArticle + "_" + strconv.Itoa(article.ID)
+	return e.CacheArticle + "_" + strconv.Itoa(*article.ID)
 }
 
 func (article *Article) GetArticlesKey() string {
@@ -23,20 +24,23 @@ func (article *Article) GetArticlesKey() string {
 		e.CacheArticle,
 		"LIST",
 	}
-	if article.ID > 0 {
-		_ = append(keys, strconv.Itoa(article.ID))
+	if article.ID != nil {
+		keys = append(keys, strconv.Itoa(*article.ID))
 	}
-	if article.TagId > 0 {
-		_ = append(keys, strconv.Itoa(article.TagId))
+	if article.TagId != nil {
+		keys = append(keys, strconv.Itoa(*article.TagId))
 	}
-	if article.State > 0 {
-		_ = append(keys, strconv.Itoa(article.State))
+	if article.State != nil {
+		keys = append(keys, strconv.Itoa(*article.State))
 	}
-	if article.PageNum > 0 {
-		_ = append(keys, strconv.Itoa(article.PageNum))
+	if article.Title != nil {
+		keys = append(keys, *article.Title)
 	}
-	if article.PageSize > 0 {
-		_ = append(keys, strconv.Itoa(article.PageSize))
+	if article.PageNum != nil {
+		keys = append(keys, strconv.Itoa(*article.PageNum))
+	}
+	if article.PageSize != nil {
+		keys = append(keys, strconv.Itoa(*article.PageSize))
 	}
 	return strings.Join(keys, "_")
 }

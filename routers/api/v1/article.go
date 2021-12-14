@@ -10,6 +10,7 @@ import (
 	"go_blog/pkg/setting"
 	"go_blog/pkg/util"
 	"go_blog/service/article_service"
+	"go_blog/service/cache_service"
 )
 
 // GetArticle 获取单个文章
@@ -47,7 +48,6 @@ func GetArticle(context *gin.Context) {
 // GetArticles 获取多个文章
 func GetArticles(context *gin.Context) {
 	response := app.BaseResponse{Ctx: context}
-	maps := make(map[string]interface{})
 	data := make(map[string]interface{})
 	title := context.Query("title")
 	tagId := context.Query("tag_id")
@@ -58,24 +58,35 @@ func GetArticles(context *gin.Context) {
 	valid.Numeric(state, "state").Message("state必须为数字")
 	valid.Range(com.StrTo(state).MustInt(), 0, 1, "state").Message("state只允许0或1")
 
-	if !valid.HasErrors() {
-		if title != "" {
-			maps["title"] = title
-		}
-		if tagId != "" {
-			maps["tag_id"] = tagId
-		}
-		if state != "" {
-			maps["state"] = state
-		}
-		data["lists"] = models.GetArticles(util.GetPage(context), setting.Config.App.PageSize, maps)
-		data["total"] = models.GetArticleTotal(maps)
-		response.Response(e.SUCCESS, data)
-	} else {
+	if valid.HasErrors() {
 		util.PrintLog(&valid)
 		response.ResponseWithMessage(e.InvalidParams, valid.Errors[0].Message, nil)
+		return
+	}
+	article := cache_service.Article{}
+	if title != "" {
+		article.Title = &title
+	}
+	if tagId != "" {
+		iTagId := com.StrTo(tagId).MustInt()
+		article.TagId = &iTagId
 
 	}
+	if state != "" {
+		iState := com.StrTo(state).MustInt()
+		article.State = &iState
+	}
+	page := util.GetPage(context)
+	article.PageNum = &page
+	article.PageSize = &setting.Config.App.PageSize
+	all, err := article_service.GetAll(&article)
+	if err != nil {
+		response.Response500(e.ErrorGetArticleFail, data)
+		return
+	}
+	data["lists"] = all
+	data["total"] = len(*all)
+	response.Response(e.SUCCESS, data)
 }
 
 //AddArticle 新增文章

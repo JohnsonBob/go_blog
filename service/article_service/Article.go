@@ -8,7 +8,7 @@ import (
 )
 
 func GetOne(id int) (article *models.Article, err error) {
-	cacheArticle := cache_service.Article{ID: id}
+	cacheArticle := cache_service.Article{ID: &id}
 	key := cacheArticle.GetArticleKey()
 	if gredis.IsExists(key) {
 		var data []byte
@@ -26,7 +26,7 @@ func GetOne(id int) (article *models.Article, err error) {
 }
 
 func GetAll(article *cache_service.Article) (articles *[]models.Article, err error) {
-	key := article.GetArticleKey()
+	key := article.GetArticlesKey()
 	if gredis.IsExists(key) {
 		var data []byte
 		data, err = gredis.Get(key)
@@ -36,9 +36,19 @@ func GetAll(article *cache_service.Article) (articles *[]models.Article, err err
 		err = json.Unmarshal(data, &articles)
 		return
 	}
-
-	*articles = models.GetArticles(article.PageNum, article.PageSize, article)
-	err = gredis.Set(key, article, 1200)
+	maps := make(map[string]interface{})
+	if article.Title != nil {
+		maps["title"] = article.Title
+	}
+	if article.TagId != nil {
+		maps["tag_id"] = article.TagId
+	}
+	if article.State != nil {
+		maps["state"] = article.State
+	}
+	all := models.GetArticles(*article.PageNum, *article.PageSize, maps)
+	articles = &all
+	err = gredis.Set(key, articles, 1200)
 	return
 }
 
