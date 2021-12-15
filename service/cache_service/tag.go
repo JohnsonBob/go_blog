@@ -7,37 +7,37 @@ import (
 )
 
 type Tag struct {
-	ID    int
-	Name  string
-	State int
+	ID    *int
+	Name  *string
+	State *int
 
-	PageNum  int
-	PageSize int
+	PageNum  *int
+	PageSize *int
 }
 
-func GetTagKey(tag *Tag) string {
-	return e.CacheTag + "_" + strconv.Itoa(tag.ID)
+func (tag *Tag) GetTagKey() string {
+	return e.CacheTag + "_" + strconv.Itoa(*tag.ID)
 }
 
-func GetTagsKey(tag *Tag) string {
+func (tag *Tag) GetTagsKey() string {
 	keys := []string{
 		e.CacheTag,
 		"LIST",
 	}
-	if tag.ID > 0 {
-		_ = append(keys, strconv.Itoa(tag.ID))
+	if tag.ID != nil {
+		keys = append(keys, strconv.Itoa(*tag.ID))
 	}
-	if tag.Name != "" {
-		_ = append(keys, tag.Name)
+	if tag.Name != nil {
+		keys = append(keys, *tag.Name)
 	}
-	if tag.State > 0 {
-		_ = append(keys, strconv.Itoa(tag.State))
+	if tag.State != nil {
+		keys = append(keys, strconv.Itoa(*tag.State))
 	}
-	if tag.PageNum > 0 {
-		_ = append(keys, strconv.Itoa(tag.PageNum))
+	if tag.PageNum != nil {
+		keys = append(keys, strconv.Itoa(*tag.PageNum))
 	}
-	if tag.PageSize > 0 {
-		_ = append(keys, strconv.Itoa(tag.PageSize))
+	if tag.PageSize != nil {
+		keys = append(keys, strconv.Itoa(*tag.PageSize))
 	}
 	return strings.Join(keys, "_")
 }

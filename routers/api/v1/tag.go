@@ -9,29 +9,36 @@ import (
 	"go_blog/pkg/e"
 	"go_blog/pkg/setting"
 	"go_blog/pkg/util"
+	"go_blog/service/cache_service"
+	"go_blog/service/tag_service"
 )
 
 // GetTags 获取多个文章标签
 func GetTags(context *gin.Context) {
 	response := app.BaseResponse{Ctx: context}
-	maps := make(map[string]interface{})
 	data := make(map[string]interface{})
-
+	tag := cache_service.Tag{}
 	if name := context.Query("name"); name != "" {
-		maps["name"] = name
+		tag.Name = &name
 	}
 
 	var state = -1
 	if arg := context.Query("state"); arg != "" {
 		state = com.StrTo(arg).MustInt()
-		maps["state"] = state
+		tag.State = &state
 	}
+	page := util.GetPage(context)
+	tag.PageNum = &page
+	tag.PageSize = &setting.Config.App.PageSize
 
-	code := e.SUCCESS
-
-	data["lists"] = models.GetTags(util.GetPage(context), setting.Config.App.PageSize, maps)
-	data["total"] = models.GetTagTotal(maps)
-	response.Response(code, data)
+	tags, err := tag_service.GetTags(&tag)
+	if err != nil {
+		response.Response500(e.ErrorGetArticlesFail, data)
+		return
+	}
+	data["lists"] = tags
+	data["total"] = len(*tags)
+	response.Response(e.SUCCESS, data)
 }
 
 // AddTag 新增文章标签

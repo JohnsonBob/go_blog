@@ -51,9 +51,3 @@ func GetAll(article *cache_service.Article) (articles *[]models.Article, err err
 	err = gredis.Set(key, articles, 1200)
 	return
 }
-
-//func ExistArticleById(id int) (bool, err error) {
-//	cacheArticle := cache_service.Article{ID: id}
-//	key := cacheArticle.GetArticleKey()
-//
-//}
