@@ -11,16 +11,17 @@ type App struct {
 	JwtSecret string
 
 	RuntimeRootPath string
-	ImagePrefixUrl  string
+	PrefixUrl       string
 	ImageSavePath   string
 
 	ImageMaxSize   int64
 	ImageAllowExts []string
 
-	LogSavePath string
-	LogSaveName string
-	LogFileExt  string
-	TimeFormat  string
+	LogSavePath    string
+	LogSaveName    string
+	LogFileExt     string
+	TimeFormat     string
+	ExportSavePath string
 }
 
 type Server struct {
