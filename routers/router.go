@@ -34,6 +34,8 @@ func InitRouter() *gin.Engine {
 		group.DELETE("/tags/:id", v1.DeleteTag)
 		//导出tag
 		group.GET("/tags/export", v1.ExportTag)
+		//导入tag
+		group.POST("/tags/import", v1.ImportTag)
 
 		//获取文章列表
 		group.GET("/articles", v1.GetArticles)

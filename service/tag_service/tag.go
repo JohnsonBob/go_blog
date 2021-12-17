@@ -2,6 +2,7 @@ package tag_service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/xuri/excelize/v2"
 	"go_blog/models"
@@ -10,6 +11,7 @@ import (
 	"go_blog/pkg/gredis"
 	"go_blog/pkg/util"
 	"go_blog/service/cache_service"
+	"mime/multipart"
 	"strconv"
 	"time"
 )
@@ -47,24 +49,24 @@ func Export(tag *cache_service.Tag) (fileName string, err error) {
 
 	xlsFile := excelize.NewFile()
 	// Create a new sheet.
-	index := xlsFile.NewSheet("标签信息")
+	index := xlsFile.NewSheet(excel.Sheet)
 	xlsFile.SetActiveSheet(index)
 
-	err = xlsFile.SetCellValue("标签信息", "A1", "ID")
-	err = xlsFile.SetCellValue("标签信息", "B1", "名称")
-	err = xlsFile.SetCellValue("标签信息", "C1", "创建人")
-	err = xlsFile.SetCellValue("标签信息", "D1", "创建时间")
-	err = xlsFile.SetCellValue("标签信息", "E1", "修改人")
-	err = xlsFile.SetCellValue("标签信息", "F1", "修改时间")
+	err = xlsFile.SetCellValue(excel.Sheet, "A1", "ID")
+	err = xlsFile.SetCellValue(excel.Sheet, "B1", "名称")
+	err = xlsFile.SetCellValue(excel.Sheet, "C1", "创建人")
+	err = xlsFile.SetCellValue(excel.Sheet, "D1", "创建时间")
+	err = xlsFile.SetCellValue(excel.Sheet, "E1", "修改人")
+	err = xlsFile.SetCellValue(excel.Sheet, "F1", "修改时间")
 
 	for index, value := range *tags {
 		line := 2 + index
-		err = xlsFile.SetCellValue("标签信息", fmt.Sprintf("%s%d", "A", line), value.ID)
-		err = xlsFile.SetCellValue("标签信息", fmt.Sprintf("%s%d", "B", line), value.Name)
-		err = xlsFile.SetCellValue("标签信息", fmt.Sprintf("%s%d", "C", line), value.CreatedBy)
-		err = xlsFile.SetCellValue("标签信息", fmt.Sprintf("%s%d", "D", line), value.CreatedOn)
-		err = xlsFile.SetCellValue("标签信息", fmt.Sprintf("%s%d", "E", line), value.ModifiedBy)
-		err = xlsFile.SetCellValue("标签信息", fmt.Sprintf("%s%d", "F", line), value.ModifiedOn)
+		err = xlsFile.SetCellValue(excel.Sheet, fmt.Sprintf("%s%d", "A", line), value.ID)
+		err = xlsFile.SetCellValue(excel.Sheet, fmt.Sprintf("%s%d", "B", line), value.Name)
+		err = xlsFile.SetCellValue(excel.Sheet, fmt.Sprintf("%s%d", "C", line), value.CreatedBy)
+		err = xlsFile.SetCellValue(excel.Sheet, fmt.Sprintf("%s%d", "D", line), value.CreatedOn)
+		err = xlsFile.SetCellValue(excel.Sheet, fmt.Sprintf("%s%d", "E", line), value.ModifiedBy)
+		err = xlsFile.SetCellValue(excel.Sheet, fmt.Sprintf("%s%d", "F", line), value.ModifiedOn)
 	}
 
 	fullPath := excel.GetExcelFullPath()
@@ -82,4 +84,25 @@ func Export(tag *cache_service.Tag) (fileName string, err error) {
 		util.Println(err)
 	}
 	return
+}
+
+func ImportTag(file multipart.File) error {
+	defer func() { _ = file.Close() }()
+	xlsFile, err := excelize.OpenReader(file)
+	if err != nil {
+		return err
+	}
+	rows, err := xlsFile.GetRows(excel.Sheet)
+	if err != nil {
+		return err
+	}
+	for index, value := range rows {
+		if index > 0 {
+			if len(value) < 5 {
+				return errors.New("导入模板错误")
+			}
+			models.AddTag(&models.Tag{Name: value[1], CreatedBy: value[2], ModifiedBy: value[4], State: 1})
+		}
+	}
+	return nil
 }

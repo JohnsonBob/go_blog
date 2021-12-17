@@ -3,6 +3,7 @@ package excel
 import "go_blog/pkg/setting"
 
 const EXT = ".xlsx"
+const Sheet = "标签信息"
 
 func GetExcelFullUrl(name string) string {
 	return setting.Config.App.PrefixUrl + "/" + GetExcelPath() + name

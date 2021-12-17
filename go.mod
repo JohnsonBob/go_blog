@@ -10,6 +10,7 @@ require (
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/robfig/cron v1.2.0
 	github.com/unknwon/com v1.0.1
+	github.com/xuri/excelize/v2 v2.4.1
 	gorm.io/driver/mysql v1.2.0
 	gorm.io/gorm v1.22.3
 )
@@ -34,7 +35,6 @@ require (
 	github.com/shiena/ansicolor v0.0.0-20200904210342-c7312218db18 // indirect
 	github.com/ugorji/go/codec v1.2.6 // indirect
 	github.com/xuri/efp v0.0.0-20210322160811-ab561f5b45e3 // indirect
-	github.com/xuri/excelize/v2 v2.4.1 // indirect
 	golang.org/x/crypto v0.0.0-20211115234514-b4de73f9ece8 // indirect
 	golang.org/x/net v0.0.0-20210726213435-c6fcb2dbf985 // indirect
 	golang.org/x/sys v0.0.0-20211116061358-0a5406a5449c // indirect

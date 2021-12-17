@@ -148,3 +148,20 @@ func ExportTag(context *gin.Context) {
 	data["export_save_url"] = excel.GetExcelFullPath() + name
 	response.Response(e.SUCCESS, data)
 }
+
+func ImportTag(context *gin.Context) {
+	response := app.BaseResponse{Ctx: context}
+	file, _, err := context.Request.FormFile("file")
+	if err != nil {
+		util.Println(err)
+		response.Response(e.InvalidParams, nil)
+		return
+	}
+	err = tag_service.ImportTag(file)
+	if err != nil {
+		util.Println(err)
+		response.Response500(e.ErrorImportTagFail, err)
+		return
+	}
+	response.Response(e.SUCCESS, nil)
+}
