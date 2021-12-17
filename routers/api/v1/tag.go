@@ -7,6 +7,7 @@ import (
 	"go_blog/app"
 	"go_blog/models"
 	"go_blog/pkg/e"
+	"go_blog/pkg/excel"
 	"go_blog/pkg/setting"
 	"go_blog/pkg/util"
 	"go_blog/service/cache_service"
@@ -119,4 +120,31 @@ func DeleteTag(context *gin.Context) {
 	} else {
 		response.ResponseWithMessage(code, valid.Errors[0].Message, nil)
 	}
+}
+
+func ExportTag(context *gin.Context) {
+	response := app.BaseResponse{Ctx: context}
+	data := make(map[string]interface{})
+	tag := cache_service.Tag{}
+	if name := context.Query("name"); name != "" {
+		tag.Name = &name
+	}
+
+	var state = -1
+	if arg := context.Query("state"); arg != "" {
+		state = com.StrTo(arg).MustInt()
+		tag.State = &state
+	}
+	page := util.GetPage(context)
+	tag.PageNum = &page
+	tag.PageSize = &setting.Config.App.PageSize
+
+	name, err := tag_service.Export(&tag)
+	if err != nil {
+		response.Response500(e.ErrorExportTagFail, data)
+		return
+	}
+	data["export_url"] = excel.GetExcelFullUrl(name)
+	data["export_save_url"] = excel.GetExcelFullPath() + name
+	response.Response(e.SUCCESS, data)
 }

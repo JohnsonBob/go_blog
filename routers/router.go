@@ -2,6 +2,7 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
+	"go_blog/pkg/excel"
 	"go_blog/pkg/middleware"
 	"go_blog/pkg/setting"
 	"go_blog/pkg/upload"
@@ -18,6 +19,7 @@ func InitRouter() *gin.Engine {
 
 	engine.POST("/auth", api.GetAuth)
 	engine.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
+	engine.StaticFS("/export", http.Dir(excel.GetExcelFullPath()))
 
 	group := engine.Group("/api/v1")
 	group.Use(middleware.JWT())
@@ -30,6 +32,8 @@ func InitRouter() *gin.Engine {
 		group.PUT("/tags/:id", v1.EditTag)
 		//删除指定标签
 		group.DELETE("/tags/:id", v1.DeleteTag)
+		//导出tag
+		group.GET("/tags/export", v1.ExportTag)
 
 		//获取文章列表
 		group.GET("/articles", v1.GetArticles)
@@ -41,7 +45,7 @@ func InitRouter() *gin.Engine {
 		group.PUT("/articles/:id", v1.EditArticle)
 		//删除指定文章
 		group.DELETE("/articles/:id", v1.DeleteArticle)
-
+		//上传图片
 		group.POST("/upload", v1.UploadImage)
 	}
 
