@@ -22,6 +22,7 @@ type App struct {
 	LogFileExt     string
 	TimeFormat     string
 	ExportSavePath string
+	QrCodeSavePath string
 }
 
 type Server struct {
