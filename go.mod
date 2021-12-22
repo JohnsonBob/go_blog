@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/astaxie/beego v1.12.3
+	github.com/boombuler/barcode v1.0.1
 	github.com/gin-gonic/gin v1.7.4
 	github.com/go-ini/ini v1.64.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
@@ -16,7 +17,6 @@ require (
 )
 
 require (
-	github.com/boombuler/barcode v1.0.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
