@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go_blog/pkg/excel"
 	"go_blog/pkg/middleware"
+	"go_blog/pkg/qrcode"
 	"go_blog/pkg/setting"
 	"go_blog/pkg/upload"
 	"go_blog/routers/api"
@@ -20,6 +21,7 @@ func InitRouter() *gin.Engine {
 	engine.POST("/auth", api.GetAuth)
 	engine.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
 	engine.StaticFS("/export", http.Dir(excel.GetExcelFullPath()))
+	engine.StaticFS("/qrcode", http.Dir(qrcode.GetQrCodeFullPath()))
 
 	group := engine.Group("/api/v1")
 	group.Use(middleware.JWT())

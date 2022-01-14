@@ -79,5 +79,5 @@ func (a *ArticlePosterBg) Generate() (name string, path string, err error) {
 			return name, path, err
 		}
 	}
-	return qrName, qrFullPath, nil
+	return a.PosterName, qrFullPath, nil
 }

@@ -222,15 +222,15 @@ func GenerateArticlePoster(context *gin.Context) {
 			Y: 298,
 		}}
 
-	name, path, err := articlePosterBgService.Generate()
+	name, _, err := articlePosterBgService.Generate()
 
 	if err != nil {
 		response.Response(e.ERROR, nil)
 		return
 	}
 	data := make(map[string]interface{})
-	data["qr_url"] = name
-	data["qr_save_url"] = path
+	data["qr_url"] = qrcode.GetQrCodeFullUrl(name)
+	data["qr_save_url"] = qrcode.GetQrCodePath() + name
 	response.Response(e.SUCCESS, data)
 
 }
