@@ -2,11 +2,13 @@ package v1
 
 import (
 	"github.com/astaxie/beego/validation"
+	"github.com/boombuler/barcode/qr"
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
 	"go_blog/app"
 	"go_blog/models"
 	"go_blog/pkg/e"
+	"go_blog/pkg/qrcode"
 	"go_blog/pkg/setting"
 	"go_blog/pkg/util"
 	"go_blog/service/article_service"
@@ -195,4 +197,40 @@ func DeleteArticle(context *gin.Context) {
 	} else {
 		response.ResponseWithMessage(code, valid.Errors[0].Message, nil)
 	}
+}
+
+const (
+	QRCODE_URL = "https://www.lingdian.site/"
+)
+
+func GenerateArticlePoster(context *gin.Context) {
+	response := app.BaseResponse{Ctx: context}
+	qrCode := qrcode.NewQrCode(QRCODE_URL, 300, 300, qr.M, qr.Auto)
+
+	posterName := article_service.GetPosterFlag() + "-" + qrcode.GetQrCodeFileName(qrCode.URL) + qrCode.GetQrCodeExt()
+	articlePoster := article_service.NewArticlePoster(posterName, &models.Article{}, *qrCode)
+
+	articlePosterBgService := article_service.ArticlePosterBg{BgName: "bg.jpg", ArticlePoster: articlePoster,
+		Rect: &article_service.Rect{
+			X0: 0,
+			Y0: 0,
+			X1: 550,
+			Y1: 700,
+		},
+		Pt: &article_service.Pt{
+			X: 125,
+			Y: 298,
+		}}
+
+	name, path, err := articlePosterBgService.Generate()
+
+	if err != nil {
+		response.Response(e.ERROR, nil)
+		return
+	}
+	data := make(map[string]interface{})
+	data["qr_url"] = name
+	data["qr_save_url"] = path
+	response.Response(e.SUCCESS, data)
+
 }

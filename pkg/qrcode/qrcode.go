@@ -1,10 +1,12 @@
 package qrcode
 
 import (
+	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/qr"
 	"go_blog/pkg/file"
 	"go_blog/pkg/setting"
 	"go_blog/pkg/util"
+	"image/jpeg"
 )
 
 type QrCode struct {
@@ -49,14 +51,27 @@ func (q *QrCode) CheckEncodeExist(path string) bool {
 	return file.CheckNotExist(src)
 }
 
-/*func (q *QrCode) Encode(path string) (string, string, error) {
+func (q *QrCode) Encode(path string) (string, string, error) {
 	name := GetQrCodeFileName(q.URL) + q.GetQrCodeExt()
 	src := path + name
+	if !file.CheckNotExist(src) {
+		return name, path, nil
+	}
+
 	encode, err := qr.Encode(q.URL, q.Level, q.Mode)
 	if err != nil {
 		return "", "", err
 	}
-
 	scale, err := barcode.Scale(encode, q.Width, q.Height)
+	if err != nil {
+		return "", "", err
+	}
+	imageFile, err := file.MustOpen(name, path)
+	defer func() { _ = imageFile.Close() }()
+
+	err = jpeg.Encode(imageFile, scale, nil)
+	if err != nil {
+		return "", "", err
+	}
+	return name, path, nil
 }
-*/

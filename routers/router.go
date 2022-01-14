@@ -49,6 +49,8 @@ func InitRouter() *gin.Engine {
 		group.DELETE("/articles/:id", v1.DeleteArticle)
 		//上传图片
 		group.POST("/upload", v1.UploadImage)
+		//生成文章海报
+		group.POST("/articles/poster/generate", v1.GenerateArticlePoster)
 	}
 
 	return engine
